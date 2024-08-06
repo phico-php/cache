@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Phico\Cache;
 
-use Phico\Cache\Drivers\Driver;
+use Phico\Cache\Drivers\DriverInterface;
+
 
 class Cache
 {
-    protected Driver $driver;
+    protected DriverInterface $driver;
 
 
     public function __construct(array $config)
     {
         $this->driver = CacheDriverFactory::create($config);
-        $this->driver->ttl($config['ttl'] ?? 3600);
     }
     public function __call(string $method, array $args): mixed
     {
@@ -36,10 +36,5 @@ class Cache
     public function get(string $key, mixed $default = null): mixed
     {
         return $this->driver->get($key, $default);
-    }
-    public function ttl(int $seconds): self
-    {
-        $this->driver->ttl($seconds);
-        return $this;
     }
 }

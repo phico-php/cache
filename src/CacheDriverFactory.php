@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Phico\Cache;
 
-use Phico\Cache\Drivers\{Driver, Filesystem, Redis};
+use Phico\Cache\Drivers\{DriverInterface, Filesystem, Redis};
+
 
 class CacheDriverFactory
 {
-    public static function create(array $config): Driver
+    public static function create(array $config): DriverInterface
     {
-        $driver = $config['driver'] ?? 'files';
+        $use = strtolower($config['use']);
 
-        return match (strtolower($driver)) {
+        return match (strtolower($use)) {
             'redis' => new Redis($config),
             'file', 'files', 'filesystem' => new Filesystem($config),
-            default => throw new \InvalidArgumentException("Unsupported driver '$driver'"),
+            default => throw new \InvalidArgumentException("Unsupported cache driver '$use'"),
         };
     }
 }
